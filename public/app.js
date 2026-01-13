@@ -1,8 +1,9 @@
 class PMOApplication {
     constructor() {
-        this.apiBaseUrl = window.location.origin.includes('localhost') 
-            ? 'http://localhost:3000/api' 
-            : '/api';
+        // this.apiBaseUrl = window.location.origin.includes('localhost') 
+        //     ? 'http://localhost:3000/api' 
+        //     : '/api';
+        this.apiBaseUrl = process.env.API_BASE_URL
         
         this.currentPage = 1;
         this.projectsPerPage = 10;
