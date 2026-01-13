@@ -2,13 +2,6 @@ const express = require('express');
 const router = express.Router();
 const projectService = require('../services/projectService');
 
-// Bypass
-
-router.get(/(.*)/, (req, res, next) => {
-    console.log(req.path, req.params); // req.params will be { '0': '/the/path' }
-    next();
-});
-
 
 // GET all projects
 router.get('/', async (req, res) => {
