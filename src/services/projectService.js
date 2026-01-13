@@ -1,74 +1,131 @@
+const pool = require('../db/pool');
 const Project = require('../models/Project');
-const DataManager = require('../utils/dataManager');
 
 class ProjectService {
-  constructor() {
-    this.dataManager = new DataManager('../data/projects.json');
-  }
-
   async getAllProjects() {
-    return await this.dataManager.getAll();
+    const query = 'SELECT * FROM projects ORDER BY created_at DESC';
+    const result = await pool.query(query);
+    return result.rows.map(row => new Project(row).toJSON());
   }
 
   async getProjectById(id) {
-    return await this.dataManager.getById(id);
+    const query = 'SELECT * FROM projects WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    if (result.rows.length === 0) return null;
+    return new Project(result.rows[0]).toJSON();
+  }
+
+  async searchProjects(keyword) {
+    const query = `
+      SELECT * FROM projects 
+      WHERE 
+        name ILIKE $1 OR 
+        description ILIKE $1 OR 
+        manager ILIKE $1 OR 
+        department ILIKE $1 OR
+        $2 = ANY(keywords) OR
+        $2 = ANY(tags)
+      ORDER BY created_at DESC
+    `;
+    const searchTerm = `%${keyword}%`;
+    const result = await pool.query(query, [searchTerm, keyword]);
+    return result.rows.map(row => new Project(row).toJSON());
   }
 
   async createProject(projectData) {
-    const project = new Project(projectData);
-    const savedProject = await this.dataManager.create(project.toJSON());
-    return savedProject;
+    const query = `
+      INSERT INTO projects (
+        name, description, status, priority, start_date, end_date,
+        budget, actual_cost, manager, department, project_type, keywords, tags
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      RETURNING *
+    `;
+    
+    const values = [
+      projectData.name,
+      projectData.description,
+      projectData.status,
+      projectData.priority,
+      projectData.start_date,
+      projectData.end_date,
+      projectData.budget,
+      projectData.actual_cost,
+      projectData.manager,
+      projectData.department,
+      projectData.project_type,
+      projectData.keywords || [],
+      projectData.tags || []
+    ];
+    
+    const result = await pool.query(query, values);
+    return new Project(result.rows[0]).toJSON();
   }
 
   async updateProject(id, projectData) {
-    const existingProject = await this.getProjectById(id);
-    if (!existingProject) {
-      return null;
-    }
+    const query = `
+      UPDATE projects SET
+        name = $1,
+        description = $2,
+        status = $3,
+        priority = $4,
+        start_date = $5,
+        end_date = $6,
+        budget = $7,
+        actual_cost = $8,
+        manager = $9,
+        department = $10,
+        project_type = $11,
+        keywords = $12,
+        tags = $13,
+        updated_at = NOW()
+      WHERE id = $14
+      RETURNING *
+    `;
     
-    const project = new Project(existingProject);
-    project.update(projectData);
+    const values = [
+      projectData.name,
+      projectData.description,
+      projectData.status,
+      projectData.priority,
+      projectData.start_date,
+      projectData.end_date,
+      projectData.budget,
+      projectData.actual_cost,
+      projectData.manager,
+      projectData.department,
+      projectData.project_type,
+      projectData.keywords || [],
+      projectData.tags || [],
+      id
+    ];
     
-    return await this.dataManager.update(id, project.toJSON());
+    const result = await pool.query(query, values);
+    if (result.rows.length === 0) return null;
+    return new Project(result.rows[0]).toJSON();
   }
 
   async deleteProject(id) {
-    return await this.dataManager.delete(id);
+    const query = 'DELETE FROM projects WHERE id = $1 RETURNING id';
+    const result = await pool.query(query, [id]);
+    return result.rows.length > 0;
   }
 
   async getProjectStats() {
-    const projects = await this.getAllProjects();
+    const query = `
+      SELECT 
+        COUNT(*) as total,
+        COUNT(CASE WHEN status = 'Completed' THEN 1 END) as completed,
+        COUNT(CASE WHEN status = 'In Progress' THEN 1 END) as in_progress,
+        COUNT(CASE WHEN status = 'Planning' THEN 1 END) as planning,
+        SUM(budget) as total_budget,
+        SUM(actual_cost) as total_cost,
+        AVG(budget) as avg_budget
+      FROM projects
+    `;
     
-    const stats = {
-      total: projects.length,
-      byStatus: {},
-      byPriority: {},
-      byDepartment: {},
-      byType: {},
-      totalBudget: 0,
-      totalActualCost: 0
-    };
-    
-    projects.forEach(project => {
-      // Count by status
-      stats.byStatus[project.status] = (stats.byStatus[project.status] || 0) + 1;
-      
-      // Count by priority
-      stats.byPriority[project.priority] = (stats.byPriority[project.priority] || 0) + 1;
-      
-      // Count by department
-      stats.byDepartment[project.department] = (stats.byDepartment[project.department] || 0) + 1;
-      
-      // Count by type
-      stats.byType[project.projectType] = (stats.byType[project.projectType] || 0) + 1;
-      
-      // Financial totals
-      stats.totalBudget += project.budget || 0;
-      stats.totalActualCost += project.actualCost || 0;
-    });
-    
-    return stats;
+    const result = await pool.query(query);
+    return result.rows[0];
   }
 }
 
-module.exports = ProjectService;
+module.exports = new ProjectService();

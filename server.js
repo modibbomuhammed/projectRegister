@@ -1,35 +1,37 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const projectRoutes = require('./src/routes/projectRoutes');
+const rateLimit = require('express-rate-limit');
+const path = require('path');
+const projectRoutes = require('./src/routes/projects');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Routes
-app.use('/api/projects', projectRoutes);
-
-// Basic route
-app.get('/', (req, res) => {
-  res.json({
-    message: 'PMO Application API',
-    endpoints: {
-      getAllProjects: 'GET /api/projects',
-      getProjectById: 'GET /api/projects/:id',
-      searchProjects: 'GET /api/projects/search/:keyword',
-      createProject: 'POST /api/projects',
-      updateProject: 'PUT /api/projects/:id',
-      deleteProject: 'DELETE /api/projects/:id'
-    }
-  });
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
 });
 
-// Error handling middleware
+// Middleware
+app.use(limiter);
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// API Routes
+app.use('/api/projects', projectRoutes);
+
+// Serve frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
@@ -38,5 +40,5 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`PMO Application running on port ${PORT}`);
-  console.log(`API available at http://localhost:${PORT}/api/projects`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
 });

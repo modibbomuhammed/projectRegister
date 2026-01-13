@@ -1,31 +1,21 @@
-const { v4: uuidv4 } = require('uuid');
-const { DateTime } = require('luxon');
-
 class Project {
   constructor(data) {
-    this.id = data.id || uuidv4();
-    this.name = data.name || '';
+    this.id = data.id;
+    this.name = data.name;
     this.description = data.description || '';
-    this.status = data.status || 'Planning'; // Planning, In Progress, Completed, On Hold, Cancelled
-    this.priority = data.priority || 'Medium'; // High, Medium, Low
-    this.startDate = data.startDate || DateTime.now().toISO();
-    this.endDate = data.endDate || '';
+    this.status = data.status || 'Planning';
+    this.priority = data.priority || 'Medium';
+    this.start_date = data.start_date || new Date().toISOString().split('T')[0];
+    this.end_date = data.end_date || null;
     this.budget = data.budget || 0;
-    this.actualCost = data.actualCost || 0;
+    this.actual_cost = data.actual_cost || 0;
     this.manager = data.manager || '';
-    this.team = data.team || [];
-    this.stakeholders = data.stakeholders || [];
-    this.risks = data.risks || [];
-    this.milestones = data.milestones || [];
-    this.keywords = data.keywords || [];
-    this.createdAt = data.createdAt || DateTime.now().toISO();
-    this.updatedAt = data.updatedAt || DateTime.now().toISO();
-    
-    // Custom fields
     this.department = data.department || '';
-    this.projectType = data.projectType || ''; // IT, Construction, Marketing, etc.
+    this.project_type = data.project_type || '';
+    this.keywords = data.keywords || [];
     this.tags = data.tags || [];
-    this.documents = data.documents || [];
+    this.created_at = data.created_at || new Date();
+    this.updated_at = data.updated_at || new Date();
   }
 
   toJSON() {
@@ -35,39 +25,18 @@ class Project {
       description: this.description,
       status: this.status,
       priority: this.priority,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      budget: this.budget,
-      actualCost: this.actualCost,
+      start_date: this.start_date,
+      end_date: this.end_date,
+      budget: parseFloat(this.budget),
+      actual_cost: parseFloat(this.actual_cost),
       manager: this.manager,
-      team: this.team,
-      stakeholders: this.stakeholders,
-      risks: this.risks,
-      milestones: this.milestones,
-      keywords: this.keywords,
       department: this.department,
-      projectType: this.projectType,
+      project_type: this.project_type,
+      keywords: this.keywords,
       tags: this.tags,
-      documents: this.documents,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      created_at: this.created_at,
+      updated_at: this.updated_at
     };
-  }
-
-  update(data) {
-    const fields = [
-      'name', 'description', 'status', 'priority', 'startDate', 'endDate',
-      'budget', 'actualCost', 'manager', 'team', 'stakeholders', 'risks',
-      'milestones', 'keywords', 'department', 'projectType', 'tags', 'documents'
-    ];
-    
-    fields.forEach(field => {
-      if (data[field] !== undefined) {
-        this[field] = data[field];
-      }
-    });
-    
-    this.updatedAt = DateTime.now().toISO();
   }
 }
 
