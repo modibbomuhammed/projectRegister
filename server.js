@@ -26,8 +26,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // API Routes
 app.use('/api/projects', projectRoutes);
 
-// Serve frontend
-app.get('(.*)', (req, res) => {
+// Catch-all for frontend routing (LAST)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
