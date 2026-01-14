@@ -1,27 +1,7 @@
-//
-console.log({num: 1, CLIENT_URL: process.env.CLIENT_URL, database: process.env.DATABASE_URL});
-//
-require('dotenv').config();
-//
-console.log({num: 2, CLIENT_URL: process.env.CLIENT_URL, database: process.env.DATABASE_URL});
-//
+// require('dotenv').config();
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 
-
-
-const cs = process.env.DATABASE_URL;
-
-console.log('TYPE:', typeof cs);
-console.log('RAW:', JSON.stringify(cs));
-console.log('TRIMMED:', JSON.stringify(cs?.trim()));
-
-new URL(cs); // ← THIS LINE
-
-
-
-
-
-
-//////////////////////////////////////////
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
