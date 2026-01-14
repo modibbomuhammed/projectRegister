@@ -14,6 +14,10 @@ const limiter = rateLimit({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 
+//
+console.log({CLIENT_URL: process.env.CLIENT_URL, database: process.env.DATABASE_URL});
+//
+
 // Middleware
 app.use(limiter);
 app.use(cors({
