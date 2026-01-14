@@ -1,4 +1,10 @@
+//
+console.log({num: 1, CLIENT_URL: process.env.CLIENT_URL, database: process.env.DATABASE_URL});
+//
 require('dotenv').config();
+//
+console.log({num: 2, CLIENT_URL: process.env.CLIENT_URL, database: process.env.DATABASE_URL});
+//
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -14,9 +20,6 @@ const limiter = rateLimit({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 
-//
-console.log({CLIENT_URL: process.env.CLIENT_URL, database: process.env.DATABASE_URL});
-//
 
 // Middleware
 app.use(limiter);
