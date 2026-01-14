@@ -3,7 +3,8 @@ class PMOApplication {
         // this.apiBaseUrl = window.location.origin.includes('localhost') 
         //     ? 'http://localhost:3000/api' 
         //     : '/api';
-        this.apiBaseUrl = process.env.API_BASE_URL
+        // this.apiBaseUrl = process.env.API_BASE_URL
+        this.apiBaseUrl = `/api`;
         
         this.currentPage = 1;
         this.projectsPerPage = 10;
