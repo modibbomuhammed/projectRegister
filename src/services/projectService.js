@@ -120,9 +120,8 @@ class ProjectService {
         SUM(budget) as total_budget,
         SUM(actual_cost) as total_cost,
         AVG(budget) as avg_budget
-      FROM projects
+      FROM public.projects
     `;
-    
     const result = await pool.query(query);
     return result.rows[0];
   }
