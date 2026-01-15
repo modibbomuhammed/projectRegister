@@ -140,7 +140,7 @@ class PMOApplication {
         this.inProgressProjectsEl.textContent = stats.in_progress || 0;
         
         const totalBudget = stats.total_budget || 0;
-        this.totalBudgetEl.textContent = `$${totalBudget.toLocaleString()}`;
+        this.totalBudgetEl.textContent = `₦${totalBudget.toLocaleString()}`;
     }
 
     filterProjects() {
@@ -238,9 +238,9 @@ class PMOApplication {
                 </td>
                 <td>${this.escapeHtml(project.department || '')}</td>
                 <td>
-                    <strong>$${parseFloat(project.budget || 0).toLocaleString()}</strong>
+                    <strong>₦${parseFloat(project.budget || 0).toLocaleString()}</strong>
                     ${project.actual_cost > 0 ? 
-                        `<br><small>Spent: $${parseFloat(project.actual_cost).toLocaleString()}</small>` : ''}
+                        `<br><small>Spent: ₦${parseFloat(project.actual_cost).toLocaleString()}</small>` : ''}
                 </td>
                 <td>${this.escapeHtml(project.manager || '')}</td>
                 <td>${project.start_date ? new Date(project.start_date).toLocaleDateString() : ''}</td>
@@ -330,8 +330,8 @@ class PMOApplication {
                         <div><strong>Priority:</strong> ${project.priority}</div>
                         <div><strong>Department:</strong> ${project.department}</div>
                         <div><strong>Manager:</strong> ${project.manager}</div>
-                        <div><strong>Budget:</strong> $${parseFloat(project.budget).toLocaleString()}</div>
-                        <div><strong>Actual Cost:</strong> $${parseFloat(project.actual_cost).toLocaleString()}</div>
+                        <div><strong>Budget:</strong> ₦${parseFloat(project.budget).toLocaleString()}</div>
+                        <div><strong>Actual Cost:</strong> ₦${parseFloat(project.actual_cost).toLocaleString()}</div>
                         <div><strong>Start Date:</strong> ${new Date(project.start_date).toLocaleDateString()}</div>
                         <div><strong>End Date:</strong> ${project.end_date ? new Date(project.end_date).toLocaleDateString() : 'N/A'}</div>
                     </div>
