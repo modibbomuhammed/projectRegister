@@ -510,6 +510,7 @@ class Project {
     this.project_code = data.project_code || `PRJ-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
     this.name = data.name;
     this.description = data.description || '';
+    this.apiBaseUrl = `/api`;
     
     // Categorization
     this.status = data.status || 'Planning';
