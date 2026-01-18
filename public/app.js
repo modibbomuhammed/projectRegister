@@ -629,6 +629,11 @@ class PMOApplication {
         // Pagination
         this.prevBtn.addEventListener('click', () => this.changePage(-1));
         this.nextBtn.addEventListener('click', () => this.changePage(1));
+
+        // Add timeline filter change
+        document.getElementById('timelineFilter')?.addEventListener('change', () => {
+            this.renderProjectTimeline();
+        });
         
         // Close modals on outside click
         window.addEventListener('click', (e) => {
@@ -661,6 +666,8 @@ class PMOApplication {
             this.currentPage = 1;
             this.renderProjects();
             this.updatePagination();
+            // Load schedule overview
+            this.updateScheduleOverview();
         } catch (error) {
             console.error('Error loading projects:', error);
             this.showToast('Error loading projects: ' + error.message, 'error');
@@ -679,6 +686,598 @@ class PMOApplication {
             this.showLoading(false);
         }
     }
+
+    updateScheduleOverview() {
+    if (this.allProjects.length === 0) {
+        document.getElementById('scheduleOverview').style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('scheduleOverview').style.display = 'block';
+    
+    // Calculate schedule statistics
+    let behindSchedule = 0;
+    let onTrack = 0;
+    let completed = 0;
+    let delayedStart = 0;
+    
+    this.allProjects.forEach(project => {
+        const schedule = this.calculateProjectSchedule(project);
+        
+        if (project.status === 'Completed') {
+            completed++;
+        } else if (schedule.isBehindSchedule) {
+            behindSchedule++;
+        } else if (schedule.isOnTrack) {
+            onTrack++;
+        }
+        
+        if (schedule.hasDelayedStart) {
+            delayedStart++;
+        }
+    });
+    
+        // Update stats
+        document.getElementById('totalProjectsCount').textContent = this.allProjects.length;
+        document.getElementById('behindScheduleCount').textContent = behindSchedule;
+        document.getElementById('onTrackCount').textContent = onTrack;
+        document.getElementById('completedCount').textContent = completed;
+        
+        // Update timeline
+        this.renderProjectTimeline();
+    }
+
+    
+    calculateProjectSchedule(project) {
+        const now = new Date();
+        const proposedStart = project.proposed_start_date ? new Date(project.proposed_start_date) : null;
+        const proposedEnd = project.proposed_end_date ? new Date(project.proposed_end_date) : null;
+        const actualStart = project.actual_start_date ? new Date(project.actual_start_date) : null;
+        const currentDeadline = project.current_deadline ? new Date(project.current_deadline) : proposedEnd;
+        const actualEnd = project.actual_end_date ? new Date(project.actual_end_date) : null;
+        
+        let status = 'unknown';
+        let isBehindSchedule = false;
+        let isOnTrack = false;
+        let hasDelayedStart = false;
+        let completionPercentage = 0;
+        let daysRemaining = null;
+        let daysLate = 0;
+        
+        // Check if project has started
+        if (actualStart) {
+            hasDelayedStart = proposedStart && actualStart > proposedStart;
+            
+            // Calculate progress
+            if (actualEnd) {
+                // Project completed
+                status = 'completed';
+                completionPercentage = 100;
+                isBehindSchedule = proposedEnd && actualEnd > proposedEnd;
+                daysLate = proposedEnd ? Math.ceil((actualEnd - proposedEnd) / (1000 * 60 * 60 * 24)) : 0;
+            } else if (currentDeadline) {
+                // Project in progress
+                const totalDuration = Math.ceil((currentDeadline - actualStart) / (1000 * 60 * 60 * 24));
+                const elapsedDays = Math.ceil((now - actualStart) / (1000 * 60 * 60 * 24));
+                
+                completionPercentage = Math.min(100, Math.round((elapsedDays / totalDuration) * 100));
+                daysRemaining = Math.ceil((currentDeadline - now) / (1000 * 60 * 60 * 24));
+                
+                isBehindSchedule = now > currentDeadline;
+                isOnTrack = !isBehindSchedule && completionPercentage <= 100;
+                status = isBehindSchedule ? 'behind' : 'ontrack';
+            }
+        } else {
+            // Project not started
+            if (proposedStart && now > proposedStart) {
+                status = 'delayed';
+                hasDelayedStart = true;
+            } else {
+                status = 'planned';
+            }
+        }
+        
+        return {
+            status,
+            isBehindSchedule,
+            isOnTrack,
+            hasDelayedStart,
+            completionPercentage,
+            daysRemaining,
+            daysLate,
+            proposedStart,
+            proposedEnd,
+            actualStart,
+            currentDeadline,
+            actualEnd
+        };
+    }
+
+
+    renderProjectTimeline() {
+        const timeline = document.getElementById('projectTimeline');
+        const filter = document.getElementById('timelineFilter').value;
+        
+        if (this.allProjects.length === 0) {
+            timeline.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>No projects to display on timeline</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort projects by deadline (closest first)
+        const sortedProjects = [...this.allProjects].sort((a, b) => {
+            const dateA = new Date(a.current_deadline || a.proposed_end_date || '9999-12-31');
+            const dateB = new Date(b.current_deadline || b.proposed_end_date || '9999-12-31');
+            return dateA - dateB;
+        });
+        
+        let timelineHTML = '';
+        let projectCount = 0;
+        
+        sortedProjects.forEach(project => {
+            const schedule = this.calculateProjectSchedule(project);
+            
+            // Apply filter
+            if (filter === 'behind' && !schedule.isBehindSchedule) return;
+            if (filter === 'ontrack' && !schedule.isOnTrack) return;
+            if (filter === 'delayed' && !schedule.hasDelayedStart) return;
+            
+            projectCount++;
+            
+            // Determine icon and class based on status
+            let iconClass = '';
+            let contentClass = '';
+            let statusText = '';
+            
+            switch(schedule.status) {
+                case 'behind':
+                    iconClass = 'behind';
+                    contentClass = 'behind';
+                    statusText = 'Behind Schedule';
+                    break;
+                case 'ontrack':
+                    iconClass = 'ontrack';
+                    contentClass = 'ontrack';
+                    statusText = 'On Track';
+                    break;
+                case 'delayed':
+                    iconClass = 'delayed';
+                    contentClass = 'delayed';
+                    statusText = 'Delayed Start';
+                    break;
+                case 'completed':
+                    iconClass = 'completed';
+                    contentClass = 'completed';
+                    statusText = 'Completed';
+                    break;
+                default:
+                    iconClass = '';
+                    contentClass = '';
+                    statusText = 'Planned';
+            }
+            
+            // Format dates
+            const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'Not set';
+            
+            timelineHTML += `
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <div class="timeline-icon ${iconClass}">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="timeline-date">
+                            ${formatDate(schedule.currentDeadline || project.proposed_end_date)}
+                        </div>
+                    </div>
+                    <div class="timeline-content ${contentClass}">
+                        <div class="timeline-title">
+                            <span>${this.escapeHtml(project.name)}</span>
+                            <span class="timeline-code">${project.project_code || 'N/A'}</span>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="timeline-detail">
+                                <i class="fas fa-flag"></i>
+                                <span>Status: <strong>${project.status}</strong></span>
+                            </div>
+                            <div class="timeline-detail">
+                                <i class="fas fa-running"></i>
+                                <span>Schedule: <strong>${statusText}</strong></span>
+                            </div>
+                            <div class="timeline-detail">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>Start: ${formatDate(project.actual_start_date || project.proposed_start_date)}</span>
+                            </div>
+                            <div class="timeline-detail">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Deadline: ${formatDate(schedule.currentDeadline || project.proposed_end_date)}</span>
+                            </div>
+                        </div>
+                        
+                        ${schedule.completionPercentage > 0 ? `
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Progress: ${schedule.completionPercentage}%</span>
+                                    ${schedule.daysRemaining !== null ? 
+                                        `<span>${schedule.daysRemaining} days remaining</span>` : 
+                                        `<span>${schedule.daysLate > 0 ? `${schedule.daysLate} days late` : 'On time'}</span>`
+                                    }
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${schedule.completionPercentage}%; background: ${schedule.isBehindSchedule ? '#f72585' : '#4cc9f0'};"></div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-sm btn-outline" onclick="app.viewProjectSchedule('${project.id}')">
+                                <i class="fas fa-chart-gantt"></i> View Details
+                            </button>
+                            ${schedule.isBehindSchedule ? `
+                                <button class="btn btn-sm btn-warning" onclick="app.extendDeadline('${project.id}')">
+                                    <i class="fas fa-calendar-plus"></i> Extend Deadline
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        if (projectCount === 0) {
+            timelineHTML = `
+                <div class="no-data">
+                    <i class="fas fa-filter"></i>
+                    <p>No projects match the selected filter</p>
+                </div>
+            `;
+        }
+        
+        timeline.innerHTML = timelineHTML;
+    }
+
+
+    toggleScheduleView() {
+        const timelineView = document.getElementById('timelineView');
+        const ganttView = document.getElementById('ganttView');
+        
+        if (!ganttView) {
+            // Create Gantt view if it doesn't exist
+            this.createGanttView();
+            return;
+        }
+        
+        if (timelineView.style.display !== 'none') {
+            timelineView.style.display = 'none';
+            ganttView.style.display = 'block';
+            this.showToast('Switched to Gantt Chart view');
+        } else {
+            timelineView.style.display = 'block';
+            ganttView.style.display = 'none';
+            this.showToast('Switched to Timeline view');
+        }
+    }
+
+    createGanttView() {
+        const timelineContainer = document.querySelector('.timeline-container');
+        
+        const ganttHTML = `
+            <div class="gantt-container" id="ganttView">
+                <div class="gantt-header">
+                    <div class="gantt-project-header">Project</div>
+                    <div class="gantt-timeline-header">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Timeline</span>
+                            <div>
+                                <span class="legend-item" style="background: #6c757d;"></span> Proposed
+                                <span class="legend-item" style="background: #4361ee; margin-left: 10px;"></span> Actual
+                                <span class="legend-item" style="background: #f72585; margin-left: 10px;"></span> Delayed
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-body" id="ganttBody">
+                    <!-- Gantt rows will be added here -->
+                </div>
+            </div>
+        `;
+        
+        timelineContainer.insertAdjacentHTML('afterend', ganttHTML);
+        this.renderGanttChart();
+    }
+
+
+    renderGanttChart() {
+        const ganttBody = document.getElementById('ganttBody');
+        
+        if (!ganttBody || this.allProjects.length === 0) return;
+        
+        // Find date range for all projects
+        let minDate = new Date();
+        let maxDate = new Date();
+        
+        this.allProjects.forEach(project => {
+            const dates = [
+                project.proposed_start_date ? new Date(project.proposed_start_date) : null,
+                project.proposed_end_date ? new Date(project.proposed_end_date) : null,
+                project.actual_start_date ? new Date(project.actual_start_date) : null,
+                project.actual_end_date ? new Date(project.actual_end_date) : null,
+                project.current_deadline ? new Date(project.current_deadline) : null
+            ].filter(d => d);
+            
+            dates.forEach(date => {
+                if (date < minDate) minDate = date;
+                if (date > maxDate) maxDate = date;
+            });
+        });
+        
+        // Add buffer
+        minDate.setMonth(minDate.getMonth() - 1);
+        maxDate.setMonth(maxDate.getMonth() + 1);
+        
+        const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+        
+        let ganttHTML = '';
+        
+        this.allProjects.forEach(project => {
+            const schedule = this.calculateProjectSchedule(project);
+            
+            // Calculate positions
+            const getPosition = (date) => {
+                if (!date) return 0;
+                const daysFromStart = Math.ceil((date - minDate) / (1000 * 60 * 60 * 24));
+                return (daysFromStart / totalDays) * 100;
+            };
+            
+            const proposedStartPos = getPosition(schedule.proposedStart);
+            const proposedEndPos = getPosition(schedule.proposedEnd);
+            const actualStartPos = getPosition(schedule.actualStart);
+            const actualEndPos = getPosition(schedule.actualEnd || schedule.currentDeadline);
+            
+            ganttHTML += `
+                <div class="gantt-row">
+                    <div class="gantt-project">
+                        <div style="font-weight: 500;">${this.escapeHtml(project.name)}</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">${project.project_code || ''}</div>
+                        <div style="font-size: 0.8rem;">
+                            <span class="schedule-badge ${schedule.isBehindSchedule ? 'badge-behind' : 'badge-ontrack'}">
+                                ${schedule.status}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="gantt-timeline">
+                        ${schedule.proposedStart && schedule.proposedEnd ? `
+                            <div class="gantt-bar proposed" 
+                                style="left: ${proposedStartPos}%; width: ${proposedEndPos - proposedStartPos}%;">
+                                Proposed
+                            </div>
+                        ` : ''}
+                        
+                        ${schedule.actualStart && (schedule.actualEnd || schedule.currentDeadline) ? `
+                            <div class="gantt-bar ${schedule.isBehindSchedule ? 'delayed' : 'actual'}" 
+                                style="left: ${actualStartPos}%; width: ${(actualEndPos - actualStartPos) || 5}%;">
+                                ${schedule.actualEnd ? 'Completed' : 'In Progress'}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        ganttBody.innerHTML = ganttHTML;
+    }
+
+    
+    viewProjectSchedule(projectId) {
+        // Find the project
+        const project = this.allProjects.find(p => p.id === projectId);
+        if (!project) return;
+        
+        const schedule = this.calculateProjectSchedule(project);
+        
+        const modalHTML = `
+            <div class="modal">
+                <div class="modal-content" style="max-width: 700px;">
+                    <div class="modal-header">
+                        <h2>Schedule Details: ${this.escapeHtml(project.name)}</h2>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="schedule-details">
+                            <div class="detail-grid">
+                                <div><strong>Project Code:</strong></div><div>${project.project_code || 'N/A'}</div>
+                                <div><strong>Status:</strong></div><div>${project.status}</div>
+                                <div><strong>Schedule Status:</strong></div><div>
+                                    <span class="schedule-badge ${schedule.isBehindSchedule ? 'badge-behind' : 'badge-ontrack'}">
+                                        ${schedule.status}
+                                    </span>
+                                </div>
+                                <div><strong>Completion:</strong></div><div>${schedule.completionPercentage}%</div>
+                            </div>
+                            
+                            <h3 style="margin-top: 1.5rem; color: var(--primary);">Timeline</h3>
+                            <div class="timeline-detail-grid">
+                                <div>
+                                    <strong>Proposed Start:</strong><br>
+                                    <span class="date-status ${schedule.hasDelayedStart ? 'late' : 'ontime'}">
+                                        ${this.formatProjectDate(project.proposed_start_date)}
+                                        ${schedule.hasDelayedStart ? ' ⚠️ Delayed' : ''}
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Actual Start:</strong><br>
+                                    <span>${this.formatProjectDate(project.actual_start_date)}</span>
+                                </div>
+                                <div>
+                                    <strong>Proposed End:</strong><br>
+                                    <span>${this.formatProjectDate(project.proposed_end_date)}</span>
+                                </div>
+                                <div>
+                                    <strong>Current Deadline:</strong><br>
+                                    <span class="date-status ${schedule.isBehindSchedule ? 'late' : schedule.daysRemaining !== null && schedule.daysRemaining < 7 ? 'upcoming' : 'ontime'}">
+                                        ${this.formatProjectDate(project.current_deadline || project.proposed_end_date)}
+                                        ${schedule.isBehindSchedule ? ` (${schedule.daysLate} days late)` : 
+                                        schedule.daysRemaining !== null ? ` (${schedule.daysRemaining} days remaining)` : ''}
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Actual End:</strong><br>
+                                    <span>${this.formatProjectDate(project.actual_end_date)}</span>
+                                </div>
+                                <div>
+                                    <strong>Extensions:</strong><br>
+                                    <span>${project.extension_count || 0} extensions (${project.total_extension_days || 0} total days)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-container" style="margin-top: 1.5rem;">
+                                <div class="progress-label">
+                                    <span>Project Progress</span>
+                                    <span>${schedule.completionPercentage}%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${schedule.completionPercentage}%; background: ${schedule.isBehindSchedule ? '#f72585' : '#4cc9f0'};"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 1.5rem;">
+                                <h3 style="color: var(--primary);">Schedule Summary</h3>
+                                <p>
+                                    ${schedule.isBehindSchedule ? 
+                                        `⚠️ This project is <strong>${schedule.daysLate} days behind schedule</strong>.` :
+                                        schedule.daysRemaining !== null ?
+                                            `✅ Project is <strong>on track</strong> with ${schedule.daysRemaining} days remaining.` :
+                                            '📅 Project timeline details are being tracked.'
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">Close</button>
+                        ${schedule.isBehindSchedule ? `
+                            <button class="btn btn-warning" onclick="app.extendDeadline('${project.id}')">
+                                <i class="fas fa-calendar-plus"></i> Extend Deadline
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-primary" onclick="app.editProject('${project.id}')">
+                            <i class="fas fa-edit"></i> Edit Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    formatProjectDate(dateString) {
+        if (!dateString) return 'Not set';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    extendDeadline(projectId) {
+        const project = this.allProjects.find(p => p.id === projectId);
+        if (!project) return;
+        
+        const modalHTML = `
+            <div class="modal" id="extendModal">
+                <div class="modal-content small-modal">
+                    <div class="modal-header">
+                        <h2>Extend Project Deadline</h2>
+                        <button class="close-btn" onclick="document.getElementById('extendModal').remove()">&times;</button>
+                    </div>
+                    <form id="extendForm" onsubmit="event.preventDefault(); app.submitExtension('${projectId}')">
+                        <div class="modal-body">
+                            <p>Extending deadline for: <strong>${this.escapeHtml(project.name)}</strong></p>
+                            
+                            <div class="form-group">
+                                <label for="extensionDays">Additional Days *</label>
+                                <input type="number" id="extensionDays" min="1" max="365" value="7" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="extensionReason">Reason for Extension *</label>
+                                <textarea id="extensionReason" rows="3" required placeholder="Explain why the deadline needs to be extended..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="extendedBy">Extended By *</label>
+                                <input type="text" id="extendedBy" value="${this.uploadedByInput?.value || 'admin'}" required>
+                            </div>
+                            
+                            <div class="info-box">
+                                <i class="fas fa-info-circle"></i>
+                                <small>Current deadline: ${this.formatProjectDate(project.current_deadline || project.proposed_end_date)}</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('extendModal').remove()">Cancel</button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-calendar-plus"></i> Extend Deadline
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    async submitExtension(projectId) {
+        const extensionDays = document.getElementById('extensionDays').value;
+        const extensionReason = document.getElementById('extensionReason').value;
+        const extendedBy = document.getElementById('extendedBy').value;
+        
+        if (!extensionDays || !extensionReason || !extendedBy) {
+            this.showToast('Please fill all required fields', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/projects/${projectId}/extend`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    extension_days: parseInt(extensionDays),
+                    reason: extensionReason,
+                    extended_by: extendedBy
+                })
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+            
+            const result = await response.json();
+            this.showToast(result.message || 'Deadline extended successfully!');
+            
+            // Remove modal
+            const modal = document.getElementById('extendModal');
+            if (modal) modal.remove();
+            
+            // Refresh data
+            this.loadProjects();
+            
+        } catch (error) {
+            console.error('Error extending deadline:', error);
+            this.showToast('Error: ' + error.message, 'error');
+        }
+    }
+
+
 
     async loadStats() {
         try {

@@ -44,6 +44,54 @@
             </div>
         </div>
 
+                <!-- Schedule Overview Section -->
+        <div class="schedule-overview" id="scheduleOverview" style="display: none;">
+            <div class="section-header">
+                <h3><i class="fas fa-calendar-alt"></i> Project Schedule Tracking</h3>
+                <button class="btn btn-sm btn-outline" onclick="app.toggleScheduleView()">
+                    <i class="fas fa-chart-line"></i> Toggle View
+                </button>
+            </div>
+            
+            <!-- Schedule Stats -->
+            <div class="schedule-stats">
+                <div class="schedule-stat">
+                    <div class="stat-value" id="totalProjectsCount">0</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="schedule-stat">
+                    <div class="stat-value" id="behindScheduleCount">0</div>
+                    <div class="stat-label">Behind Schedule</div>
+                </div>
+                <div class="schedule-stat">
+                    <div class="stat-value" id="onTrackCount">0</div>
+                    <div class="stat-label">On Track</div>
+                </div>
+                <div class="schedule-stat">
+                    <div class="stat-value" id="completedCount">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+            
+            <!-- Schedule Timeline View -->
+            <div class="timeline-container" id="timelineView">
+                <div class="timeline-header">
+                    <h4><i class="fas fa-timeline"></i> Project Timeline Overview</h4>
+                    <div class="timeline-filters">
+                        <select id="timelineFilter" class="filter-select">
+                            <option value="all">All Projects</option>
+                            <option value="behind">Behind Schedule</option>
+                            <option value="ontrack">On Track</option>
+                            <option value="delayed">Delayed Start</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="timeline" id="projectTimeline">
+                    <!-- Timeline items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
         <!-- Search and Filter Section -->
         <div class="search-section">
             <div class="search-box">

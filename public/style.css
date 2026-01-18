@@ -485,6 +485,347 @@ form {
     background: var(--danger);
 }
 
+/* Schedule Overview */
+.schedule-overview {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--light-gray);
+}
+
+.section-header h3 {
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+/* Schedule Stats */
+.schedule-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.schedule-stat {
+    background: var(--light-gray);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.schedule-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.schedule-stat:nth-child(2) { background: #f8d7da; color: #721c24; }
+.schedule-stat:nth-child(3) { background: #d4edda; color: #155724; }
+.schedule-stat:nth-child(4) { background: #d1ecf1; color: #0c5460; }
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: inherit;
+    opacity: 0.9;
+}
+
+/* Timeline */
+.timeline-container {
+    margin-top: 1.5rem;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.timeline-header h4 {
+    color: var(--dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline {
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--light-gray);
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.timeline-marker {
+    width: 60px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    margin: 0 auto;
+}
+
+.timeline-icon.behind { background: var(--danger); }
+.timeline-icon.ontrack { background: var(--success); }
+.timeline-icon.delayed { background: var(--warning); }
+.timeline-icon.completed { background: var(--info); }
+
+.timeline-date {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 5px;
+    text-align: center;
+}
+
+.timeline-content {
+    flex: 1;
+    background: var(--light-gray);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-left: 1rem;
+    border-left: 4px solid var(--primary);
+}
+
+.timeline-content.behind { border-color: var(--danger); }
+.timeline-content.ontrack { border-color: var(--success); }
+.timeline-content.delayed { border-color: var(--warning); }
+.timeline-content.completed { border-color: var(--info); }
+
+.timeline-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timeline-code {
+    font-family: monospace;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+
+.timeline-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.timeline-detail {
+    background: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.timeline-detail i {
+    color: var(--gray);
+}
+
+/* Progress Bars */
+.progress-container {
+    margin-top: 1rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Gantt Chart View */
+.gantt-container {
+    margin-top: 2rem;
+    overflow-x: auto;
+}
+
+.gantt-header {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    background: var(--light-gray);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    overflow: hidden;
+}
+
+.gantt-project-header, .gantt-timeline-header {
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.gantt-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.gantt-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1px solid var(--light-gray);
+    padding: 0.5rem 0;
+}
+
+.gantt-project {
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gantt-timeline {
+    position: relative;
+    padding: 0.5rem 0;
+    min-height: 40px;
+}
+
+.gantt-bar {
+    position: absolute;
+    height: 20px;
+    border-radius: 10px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    overflow: hidden;
+}
+
+.gantt-bar.proposed { background: #6c757d; }
+.gantt-bar.actual { background: #4361ee; }
+.gantt-bar.delayed { background: #f72585; }
+
+/* Schedule Badges */
+.schedule-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-left: 5px;
+}
+
+.badge-behind { background: #f8d7da; color: #721c24; }
+.badge-ontrack { background: #d4edda; color: #155724; }
+.badge-delayed { background: #fff3cd; color: #856404; }
+.badge-completed { background: #d1ecf1; color: #0c5460; }
+
+/* Date Status Indicators */
+.date-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    margin-top: 3px;
+}
+
+.date-status.late { color: var(--danger); }
+.date-status.ontime { color: var(--success); }
+.date-status.upcoming { color: var(--warning); }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .schedule-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .timeline::before {
+        left: 20px;
+    }
+    
+    .timeline-marker {
+        width: 40px;
+    }
+    
+    .timeline-content {
+        margin-left: 0.5rem;
+    }
+    
+    .gantt-header,
+    .gantt-row {
+        grid-template-columns: 150px 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .schedule-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .stats-container {
