@@ -806,7 +806,7 @@ class PMOApplication {
         this.inProgressProjectsEl.textContent = stats.in_progress || 0;
         
         const totalBudget = stats.total_estimated_budget || 0;
-        this.totalBudgetEl.textContent = `$${totalBudget.toLocaleString()}`;
+        this.totalBudgetEl.textContent = `₦${totalBudget.toLocaleString()}`;
     }
 
     filterProjects() {
