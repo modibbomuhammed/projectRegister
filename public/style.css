@@ -263,6 +263,7 @@ tbody tr:hover {
 .status-in-progress {
     background: #d1ecf1;
     color: #0c5460;
+    white-space: nowrap;
 }
 
 .status-completed {
