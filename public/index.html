@@ -13,8 +13,11 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <h1><i class="fas fa-project-diagram"></i> PMO Dashboard</h1>
+            <h1><i class="fas fa-project-diagram"></i> NIMASA PMO Dashboard</h1>
             <div class="nav-links">
+                <button id="dashboardBtn" class="btn btn-outline">
+                    <i class="fas fa-chart-pie"></i> Dashboards
+                </button>
                 <button id="refreshBtn" class="btn btn-outline">
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
@@ -22,145 +25,110 @@
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Stats Overview -->
-        <div class="stats-container" id="statsContainer">
-            <div class="stat-card">
-                <h3><i class="fas fa-list"></i> Total Projects</h3>
-                <p id="totalProjects">0</p>
+    <!-- Main Content Container -->
+    <div class="container" id="mainContainer">
+        <!-- Projects List View (Default View) -->
+        <div id="projectsListView" class="view-active">
+            <!-- Stats Overview -->
+            <div class="stats-container" id="statsContainer">
+                <div class="stat-card">
+                    <h3><i class="fas fa-list"></i> Total Projects</h3>
+                    <p id="totalProjects">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-chart-line"></i> Total Budget</h3>
+                    <p id="totalBudget">₦0</p>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-check-circle"></i> Completed</h3>
+                    <p id="completedProjects">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-spinner"></i> In Progress</h3>
+                    <p id="inProgressProjects">0</p>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3><i class="fas fa-chart-line"></i> Total Budget</h3>
-                <p id="totalBudget">₦0</p>
-            </div>
-            <div class="stat-card">
-                <h3><i class="fas fa-check-circle"></i> Completed</h3>
-                <p id="completedProjects">0</p>
-            </div>
-            <div class="stat-card">
-                <h3><i class="fas fa-spinner"></i> In Progress</h3>
-                <p id="inProgressProjects">0</p>
-            </div>
-        </div>
 
-                <!-- Schedule Overview Section -->
-        <div class="schedule-overview" id="scheduleOverview" style="display: none;">
-            <div class="section-header">
-                <h3><i class="fas fa-calendar-alt"></i> Project Schedule Tracking</h3>
-                <button class="btn btn-sm btn-outline" onclick="app.toggleScheduleView()">
-                    <i class="fas fa-chart-line"></i> Toggle View
+            <!-- Search and Filter Section -->
+            <div class="search-section">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search projects by name, code, keyword, or department...">
+                    <button id="searchBtn" class="btn btn-primary">Search</button>
+                </div>
+                <div class="filter-section">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="Planning">Planning</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <select id="priorityFilter" class="filter-select">
+                        <option value="">All Priority</option>
+                        <option value="High">High Priority</option>
+                        <option value="Medium">Medium Priority</option>
+                        <option value="Low">Low Priority</option>
+                    </select>
+                    <button id="addProjectBtn" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add New Project
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projects Table -->
+            <div class="table-container">
+                <table id="projectsTable">
+                    <thead>
+                        <tr>
+                            <th>Project Code</th>
+                            <th>Project Name</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Department</th>
+                            <th>Budget</th>
+                            <th>Manager</th>
+                            <th>Start Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="loading" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading projects...
+                </div>
+                <div id="noProjects" class="no-data" style="display: none;">
+                    No projects found. Click "Add New Project" to get started!
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination" style="display: none;">
+                <button id="prevBtn" class="btn btn-outline">
+                    <i class="fas fa-chevron-left"></i> Previous
                 </button>
-            </div>
-            
-            <!-- Schedule Stats -->
-            <div class="schedule-stats">
-                <div class="schedule-stat">
-                    <div class="stat-value" id="totalProjectsCount">0</div>
-                    <div class="stat-label">Total Projects</div>
-                </div>
-                <div class="schedule-stat">
-                    <div class="stat-value" id="behindScheduleCount">0</div>
-                    <div class="stat-label">Behind Schedule</div>
-                </div>
-                <div class="schedule-stat">
-                    <div class="stat-value" id="onTrackCount">0</div>
-                    <div class="stat-label">On Track</div>
-                </div>
-                <div class="schedule-stat">
-                    <div class="stat-value" id="completedCount">0</div>
-                    <div class="stat-label">Completed</div>
-                </div>
-            </div>
-            
-            <!-- Schedule Timeline View -->
-            <div class="timeline-container" id="timelineView">
-                <div class="timeline-header">
-                    <h4><i class="fas fa-timeline"></i> Project Timeline Overview</h4>
-                    <div class="timeline-filters">
-                        <select id="timelineFilter" class="filter-select">
-                            <option value="all">All Projects</option>
-                            <option value="behind">Behind Schedule</option>
-                            <option value="ontrack">On Track</option>
-                            <option value="delayed">Delayed Start</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="timeline" id="projectTimeline">
-                    <!-- Timeline items will be loaded here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Search and Filter Section -->
-        <div class="search-section">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search projects by name, code, keyword, or department...">
-                <button id="searchBtn" class="btn btn-primary">Search</button>
-            </div>
-            <div class="filter-section">
-                <select id="statusFilter" class="filter-select">
-                    <option value="">All Status</option>
-                    <option value="Planning">Planning</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="On Hold">On Hold</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-                <select id="priorityFilter" class="filter-select">
-                    <option value="">All Priority</option>
-                    <option value="High">High Priority</option>
-                    <option value="Medium">Medium Priority</option>
-                    <option value="Low">Low Priority</option>
-                </select>
-                <button id="addProjectBtn" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Add New Project
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextBtn" class="btn btn-outline">
+                    Next <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Projects Table -->
-        <div class="table-container">
-            <table id="projectsTable">
-                <thead>
-                    <tr>
-                        <th>Project Code</th>
-                        <th>Project Name</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                        <th>Department</th>
-                        <th>Budget</th>
-                        <th>Manager</th>
-                        <th>Start Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="projectsTableBody">
-                    <!-- Projects will be loaded here -->
-                </tbody>
-            </table>
-            <div id="loading" class="loading">
-                <i class="fas fa-spinner fa-spin"></i> Loading projects...
-            </div>
-            <div id="noProjects" class="no-data" style="display: none;">
-                No projects found. Click "Add New Project" to get started!
-            </div>
+        <!-- Project Detail View (Hidden by Default) -->
+        <div id="projectDetailView" class="view-hidden">
+            <!-- Detail View will be loaded here dynamically -->
         </div>
 
-        <!-- Pagination -->
-        <div class="pagination" id="pagination" style="display: none;">
-            <button id="prevBtn" class="btn btn-outline">
-                <i class="fas fa-chevron-left"></i> Previous
-            </button>
-            <span id="pageInfo">Page 1 of 1</span>
-            <button id="nextBtn" class="btn btn-outline">
-                Next <i class="fas fa-chevron-right"></i>
-            </button>
+        <!-- Global Dashboards View (Hidden by Default) -->
+        <div id="dashboardsView" class="view-hidden">
+            <!-- Dashboards will be loaded here dynamically -->
         </div>
     </div>
 
-    <!-- Project Modal -->
+    <!-- Project Modal (for Add/Edit) -->
     <div id="projectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -168,238 +136,26 @@
                 <button class="close-btn" id="closeModal">&times;</button>
             </div>
             <form id="projectForm">
-                <input type="hidden" id="projectId">
-                
-                <div class="form-grid">
-                    <!-- Basic Information -->
-                    <div class="form-group">
-                        <label for="project_code">Project Code *</label>
-                        <input type="text" id="project_code" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="name">Project Name *</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status">
-                            <option value="Planning">Planning</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Completed">Completed</option>
-                            <option value="On Hold">On Hold</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="priority">Priority</label>
-                        <select id="priority">
-                            <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
-                            <option value="High">High</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <input type="text" id="category" list="categories">
-                        <datalist id="categories">
-                            <option>Infrastructure</option>
-                            <option>Software</option>
-                            <option>Construction</option>
-                            <option>Marketing</option>
-                            <option>Research</option>
-                            <option>Training</option>
-                            <option>Process Improvement</option>
-                            <option>Product Development</option>
-                        </datalist>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="department">Department</label>
-                        <input type="text" id="department" list="departments">
-                        <datalist id="departments">
-                            <option>IT</option>
-                            <option>Marketing</option>
-                            <option>Engineering</option>
-                            <option>Operations</option>
-                            <option>Finance</option>
-                            <option>HR</option>
-                            <option>Sales</option>
-                            <option>R&D</option>
-                        </datalist>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="project_type">Project Type</label>
-                        <input type="text" id="project_type" list="projectTypes">
-                        <datalist id="projectTypes">
-                            <option>Software Development</option>
-                            <option>Infrastructure Upgrade</option>
-                            <option>Marketing Campaign</option>
-                            <option>Construction</option>
-                            <option>Research Project</option>
-                            <option>Process Improvement</option>
-                            <option>Training Program</option>
-                            <option>Event Management</option>
-                        </datalist>
-                    </div>
-                    
-                    <!-- Timeline Section -->
-                    <div class="form-group">
-                        <label for="proposed_start_date">Proposed Start Date</label>
-                        <input type="date" id="proposed_start_date">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="proposed_end_date">Proposed End Date</label>
-                        <input type="date" id="proposed_end_date">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="actual_start_date">Actual Start Date</label>
-                        <input type="date" id="actual_start_date">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="actual_end_date">Actual End Date</label>
-                        <input type="date" id="actual_end_date">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="current_deadline">Current Deadline</label>
-                        <input type="date" id="current_deadline">
-                    </div>
-                    
-                    <!-- Financial Section -->
-                    <div class="form-group">
-                        <label for="estimated_budget">Estimated Budget (₦)</label>
-                        <input type="number" id="estimated_budget" min="0" step="1000">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="budget_allocated">Budget Allocated (₦)</label>
-                        <input type="number" id="budget_allocated" min="0" step="1000">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="budget_utilized">Budget Utilized (₦)</label>
-                        <input type="number" id="budget_utilized" min="0" step="1000">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contingency_funds">Contingency Funds (₦)</label>
-                        <input type="number" id="contingency_funds" min="0" step="1000">
-                    </div>
-                    
-                    <!-- People Section -->
-                    <div class="form-group">
-                        <label for="project_manager">Project Manager</label>
-                        <input type="text" id="project_manager">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contractor_name">Contractor Name</label>
-                        <input type="text" id="contractor_name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contractor_company">Contractor Company</label>
-                        <input type="text" id="contractor_company">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="uploaded_by">Uploaded By *</label>
-                        <input type="text" id="uploaded_by" required>
-                    </div>
-                    
-                    <!-- Description -->
-                    <div class="form-group span-2">
-                        <label for="description">Description</label>
-                        <textarea id="description" rows="3"></textarea>
-                    </div>
-                    
-                    <!-- Team & Stakeholders -->
-                    <div class="form-group span-2">
-                        <label for="team_members">Team Members (comma separated)</label>
-                        <input type="text" id="team_members" placeholder="e.g., John Smith, Sarah Johnson, Mike Brown">
-                    </div>
-                    
-                    <div class="form-group span-2">
-                        <label for="stakeholders">Stakeholders (comma separated)</label>
-                        <input type="text" id="stakeholders" placeholder="e.g., Marketing Dept, IT Department, Finance Team">
-                    </div>
-                    
-                    <!-- Keywords & Tags -->
-                    <div class="form-group span-2">
-                        <label for="keywords">Keywords (comma separated)</label>
-                        <input type="text" id="keywords" placeholder="e.g., website, redesign, ui-ux, mobile">
-                    </div>
-                    
-                    <div class="form-group span-2">
-                        <label for="tags">Tags (comma separated)</label>
-                        <input type="text" id="tags" placeholder="e.g., digital, customer-facing, urgent, strategic">
-                    </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="saveBtn">
-                        <i class="fas fa-save"></i> Save Project
-                    </button>
-                </div>
+                <!-- Existing form fields... -->
+                <!-- Keep all your existing form fields here -->
             </form>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal">
+    <!-- Quick View Modal -->
+    <div id="quickViewModal" class="modal">
         <div class="modal-content small-modal">
             <div class="modal-header">
-                <h2>Confirm Delete</h2>
-                <button class="close-btn" id="closeDeleteModal">&times;</button>
+                <h2>Project Quick View</h2>
+                <button class="close-btn" id="closeQuickView">&times;</button>
             </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this project? This action cannot be undone.</p>
-                <p id="deleteProjectName" class="delete-project-name"></p>
+            <div class="modal-body" id="quickViewContent">
+                <!-- Quick view content will be loaded here -->
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelDelete">Cancel</button>
-                <button class="btn btn-danger" id="confirmDelete">Delete Project</button>
+                <button class="btn btn-secondary" id="closeQuickViewBtn">Close</button>
+                <button class="btn btn-primary" id="viewDetailsBtn">View Full Details</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Extension Modal -->
-    <div id="extensionModal" class="modal">
-        <div class="modal-content small-modal">
-            <div class="modal-header">
-                <h2>Extend Project Deadline</h2>
-                <button class="close-btn" id="closeExtensionModal">&times;</button>
-            </div>
-            <form id="extensionForm">
-                <input type="hidden" id="extensionProjectId">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="extension_days">Extension Days *</label>
-                        <input type="number" id="extension_days" min="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="extension_reason">Reason for Extension *</label>
-                        <textarea id="extension_reason" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="extension_by">Extended By *</label>
-                        <input type="text" id="extension_by" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelExtension">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Extend Deadline</button>
-                </div>
-            </form>
         </div>
     </div>
 
