@@ -929,7 +929,7 @@ class PMOApplication {
                     </td>
                     <td>${this.escapeHtml(project.department || '')}</td>
                     <td>
-                        <strong>$${budget.toLocaleString()}</strong>
+                        <strong>₦${budget.toLocaleString()}</strong>
                         ${budget > 0 ? `
                             <div class="budget-progress">
                                 <div class="progress-bar">
