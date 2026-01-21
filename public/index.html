@@ -136,11 +136,191 @@
                 <button class="close-btn" id="closeModal">&times;</button>
             </div>
             <form id="projectForm">
-                <!-- Existing form fields... -->
-                <!-- Keep all your existing form fields here -->
+                <!-- Hidden field for project ID -->
+                <input type="hidden" id="projectId" name="projectId">
+                
+                <!-- Basic Information -->
+                <div class="form-group">
+                    <label for="project_code">Project Code *</label>
+                    <input type="text" id="project_code" name="project_code" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Project Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+                
+                <!-- Project Details -->
+                <div class="form-group">
+                    <label for="status">Status *</label>
+                    <select id="status" name="status" required>
+                        <option value="">Select status</option>
+                        <option value="Planning">Planned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="On hold">On Hold</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="priority">Priority *</label>
+                    <select id="priority" name="priority" required>
+                        <option value="">Select priority</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select category</option>
+                        <option value="construction">Construction</option>
+                        <option value="it">IT</option>
+                        <option value="research">Research</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="department">Department *</label>
+                    <select id="department" name="department" required>
+                        <option value="">Select department</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="operations">Operations</option>
+                        <option value="finance">Finance</option>
+                        <option value="hr">Human Resources</option>
+                        <option value="IT">IT Department</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="project_type">Project Type *</label>
+                    <select id="project_type" name="project_type" required>
+                        <option value="">Select type</option>
+                        <option value="internal">Internal</option>
+                        <option value="external">External</option>
+                        <option value="client">Client Project</option>
+                        <option value="rnd">R&D</option>
+                    </select>
+                </div>
+                
+                <!-- Dates Section -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="proposed_start_date">Proposed Start Date *</label>
+                        <input type="date" id="proposed_start_date" name="proposed_start_date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="proposed_end_date">Proposed End Date</label>
+                        <input type="date" id="proposed_end_date" name="proposed_end_date">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="actual_start_date">Actual Start Date</label>
+                        <input type="date" id="actual_start_date" name="actual_start_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="actual_end_date">Actual End Date</label>
+                        <input type="date" id="actual_end_date" name="actual_end_date">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="current_deadline">Current Deadline</label>
+                    <input type="date" id="current_deadline" name="current_deadline">
+                </div>
+                
+                <!-- Budget Section -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estimated_budget">Estimated Budget (₦)</label>
+                        <input type="number" id="estimated_budget" name="estimated_budget" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="budget_allocated">Budget Allocated (₦)</label>
+                        <input type="number" id="budget_allocated" name="budget_allocated" min="0" step="0.01">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="budget_utilized">Budget Utilized (₦)</label>
+                        <input type="number" id="budget_utilized" name="budget_utilized" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contingency_funds">Contingency Funds (₦)</label>
+                        <input type="number" id="contingency_funds" name="contingency_funds" min="0" step="0.01">
+                    </div>
+                </div>
+                
+                <!-- People Section -->
+                <div class="form-group">
+                    <label for="project_manager">Project Manager</label>
+                    <input type="text" id="project_manager" name="project_manager">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contractor_name">Contractor Name</label>
+                    <input type="text" id="contractor_name" name="contractor_name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contractor_company">Contractor Company</label>
+                    <input type="text" id="contractor_company" name="contractor_company">
+                </div>
+                
+                <div class="form-group">
+                    <label for="uploaded_by">Uploaded By</label>
+                    <input type="text" id="uploaded_by" name="uploaded_by">
+                </div>
+                
+                <!-- Team and Stakeholders -->
+                <div class="form-group">
+                    <label for="team_members">Team Members (comma-separated)</label>
+                    <textarea id="team_members" name="team_members" rows="3" placeholder="John Doe, Jane Smith, etc."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="stakeholders">Stakeholders (comma-separated)</label>
+                    <textarea id="stakeholders" name="stakeholders" rows="3" placeholder="Client A, Department Head, etc."></textarea>
+                </div>
+                
+                <!-- Tags and Keywords -->
+                <div class="form-group">
+                    <label for="keywords">Keywords (comma-separated)</label>
+                    <input type="text" id="keywords" name="keywords" placeholder="construction, renovation, building">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tags">Tags (comma-separated)</label>
+                    <input type="text" id="tags" name="tags" placeholder="urgent, phase1, external">
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="modal-actions">
+                    <button type="button" id="cancelProject" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" id="saveProject" class="btn btn-primary">Save Project</button>
+                </div>
             </form>
         </div>
     </div>
+    
 
     <!-- Quick View Modal -->
     <div id="quickViewModal" class="modal">

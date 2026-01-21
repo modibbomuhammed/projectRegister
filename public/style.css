@@ -2107,7 +2107,6 @@ form {
     min-width: 100px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #0C5460;
 }
 
 .status-badge {
@@ -2119,6 +2118,7 @@ form {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     color: white;
 }
+
 
 /* Info Grid */
 .info-grid {
@@ -2385,6 +2385,79 @@ form {
 .text-warning { color: #f8961e !important; font-weight: 600; }
 .text-info { color: #4895ef !important; font-weight: 600; }
 
+#forceColorRed {
+    color: red;
+}
+
+#forceColorBlue {
+    color: blue;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
 /* Responsive fixes for detail view */
 @media (max-width: 768px) {
     .detail-view-header {
@@ -2455,4 +2528,530 @@ form {
     .overview-card {
         padding: 1rem;
     }
+}
+/* ===== ADD THESE STYLES TO YOUR EXISTING CSS ===== */
+
+/* Form Grid Layout for Modal */
+#projectForm {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+#projectForm::-webkit-scrollbar {
+    width: 6px;
+}
+
+#projectForm::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#projectForm::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#projectForm .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#projectForm .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#projectForm .form-group.span-2 {
+    grid-column: span 2;
+}
+
+#projectForm .form-group.span-1 {
+    grid-column: span 1;
+}
+
+/* Form Inputs with Specific IDs */
+#projectForm input[type="text"],
+#projectForm input[type="number"],
+#projectForm input[type="date"],
+#projectForm select,
+#projectForm textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--light-gray);
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: white;
+    transition: var(--transition);
+}
+
+#projectForm input[type="text"]:focus,
+#projectForm input[type="number"]:focus,
+#projectForm input[type="date"]:focus,
+#projectForm select:focus,
+#projectForm textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+#projectForm input[type="date"] {
+    padding: 9px 12px;
+}
+
+#projectForm textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 150px;
+}
+
+/* Form Labels */
+#projectForm .form-group label {
+    font-weight: 500;
+    color: var(--dark);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#projectForm .form-group label::after {
+    content: ' *';
+    color: var(--danger);
+    opacity: 0.7;
+    margin-left: 2px;
+}
+
+#projectForm .form-group label:has(+ :not([required]))::after {
+    content: '';
+}
+
+/* Select Dropdowns - Fix for values not showing */
+#projectForm select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    padding-right: 35px;
+    cursor: pointer;
+}
+
+#projectForm select option {
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+#projectForm select option:checked {
+    background: linear-gradient(to right, var(--primary), var(--primary));
+    color: white;
+}
+
+/* Form Row Layout */
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 1.5rem;
+    border-top: 1px solid var(--light-gray);
+    background: #f8f9fa;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.modal-actions .btn {
+    min-width: 120px;
+}
+
+/* Required Field Indicator */
+.required-field::after {
+    content: ' *';
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* Form Validation Styles */
+#projectForm input:invalid,
+#projectForm select:invalid,
+#projectForm textarea:invalid {
+    border-color: var(--danger);
+    background-color: rgba(247, 37, 133, 0.05);
+}
+
+#projectForm input:valid,
+#projectForm select:valid,
+#projectForm textarea:valid {
+    border-color: var(--success);
+}
+
+/* Modal Header Specific for Project Form */
+#projectModal .modal-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+#projectModal .modal-header h2 {
+    color: white;
+    margin: 0;
+}
+
+#projectModal .close-btn {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    width: 32px;
+    height: 32px;
+}
+
+#projectModal .close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Form Section Headers */
+.form-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--light-gray);
+}
+
+.form-section h3 {
+    color: var(--primary);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Form Field Groups */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Budget Fields Grid */
+.budget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Date Fields Layout */
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* People Fields Grid */
+.people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Textarea Groups */
+.textarea-group {
+    margin-bottom: 1rem;
+}
+
+.textarea-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.textarea-group textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid var(--light-gray);
+    border-radius: var(--border-radius);
+    resize: vertical;
+}
+
+/* Form Help Text */
+.form-help {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Fix for dropdown values display */
+select:invalid {
+    color: var(--gray);
+}
+
+select:valid {
+    color: var(--dark);
+}
+
+select option {
+    color: var(--dark);
+    background: white;
+}
+
+select option:first-child {
+    color: var(--gray);
+}
+
+/* Ensure dropdown shows selected value */
+select option[selected] {
+    background: var(--primary);
+    color: white;
+}
+
+/* Focus states for better accessibility */
+#projectForm input:focus,
+#projectForm select:focus,
+#projectForm textarea:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(67, 97, 238, 0.1);
+}
+
+/* Disabled state */
+#projectForm input:disabled,
+#projectForm select:disabled,
+#projectForm textarea:disabled {
+    background-color: var(--light-gray);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Readonly state */
+#projectForm input[readonly] {
+    background-color: var(--light-gray);
+    border-color: var(--light-gray);
+}
+
+/* Form Grid for Specific Fields */
+#projectForm .form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Status and Priority Specific Styles */
+#status, #priority {
+    text-transform: capitalize;
+}
+
+/* Custom Scrollbar for Modal Content */
+.modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--light-gray) transparent;
+}
+
+/* Modal Responsive Design */
+@media (max-width: 768px) {
+    #projectForm .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #projectForm .form-group.span-2 {
+        grid-column: span 1;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .budget-grid,
+    .date-grid,
+    .people-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #projectForm .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions .btn {
+        min-width: 100%;
+        text-align: center;
+    }
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    #projectForm .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    #projectForm input,
+    #projectForm select,
+    #projectForm textarea {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    #projectForm input:focus,
+    #projectForm select:focus,
+    #projectForm textarea:focus {
+        border-color: var(--primary);
+        background: #2d3748;
+    }
+    
+    #projectForm select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e2e8f0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    }
+}
+
+/* Print Styles */
+@media print {
+    #projectForm,
+    .modal-actions {
+        display: none;
+    }
+}
+
+/* Form Loading State */
+.form-loading {
+    position: relative;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.form-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+}
+
+/* Form Success State */
+.form-success {
+    border-color: var(--success) !important;
+    background-color: rgba(76, 201, 240, 0.05) !important;
+}
+
+/* Form Error State */
+.form-error {
+    border-color: var(--danger) !important;
+    background-color: rgba(247, 37, 133, 0.05) !important;
+}
+
+/* Form Warning State */
+.form-warning {
+    border-color: var(--warning) !important;
+    background-color: rgba(248, 150, 30, 0.05) !important;
+}
+
+/* Placeholder Styling */
+#projectForm ::placeholder {
+    color: var(--gray);
+    opacity: 0.7;
+}
+
+#projectForm :-ms-input-placeholder {
+    color: var(--gray);
+}
+
+#projectForm ::-ms-input-placeholder {
+    color: var(--gray);
+}
+
+/* Number Input Specific */
+#projectForm input[type="number"]::-webkit-inner-spin-button,
+#projectForm input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    margin: 0;
+    height: auto;
+}
+
+/* Textarea Character Counter */
+.textarea-counter {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 4px;
+}
+
+.textarea-counter.near-limit {
+    color: var(--warning);
+}
+
+.textarea-counter.over-limit {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* Field Description */
+.field-description {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 2px;
+    font-style: italic;
+}
+
+/* Compact Form Variant */
+.form-compact .form-group {
+    margin-bottom: 0.75rem;
+}
+
+.form-compact input,
+.form-compact select,
+.form-compact textarea {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+/* Large Form Variant */
+.form-large .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-large input,
+.form-large select,
+.form-large textarea {
+    padding: 14px 16px;
+    font-size: 1rem;
+}
+
+/* Inline Form Variant */
+.form-inline {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.form-inline .form-group {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 200px;
 }
