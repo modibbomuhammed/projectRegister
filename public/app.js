@@ -696,8 +696,8 @@ class PMOApplication {
                         <h3><i class="fas fa-money-check-alt"></i> Budget Overview</h3>
                         <div class="budget-progress-container">
                             <div class="budget-labels">
-                                <span>Estimated: $${project.estimated_budget?.toLocaleString() || 0}</span>
-                                <span>Utilized: $${project.budget_utilized?.toLocaleString() || 0}</span>
+                                <span>Estimated: ₦${project.estimated_budget?.toLocaleString() || 0}</span>
+                                <span>Utilized: ₦${project.budget_utilized?.toLocaleString() || 0}</span>
                             </div>
                             <div class="budget-bar">
                                 <div class="budget-allocated" style="width: ${financial.allocationPercentage}%"></div>
@@ -707,11 +707,11 @@ class PMOApplication {
                             </div>
                             <div class="budget-stats">
                                 <div class="budget-stat">
-                                    <span>Allocated: $${project.budget_allocated?.toLocaleString() || 0}</span>
+                                    <span>Allocated: ₦${project.budget_allocated?.toLocaleString() || 0}</span>
                                     <span>${financial.allocationPercentage}%</span>
                                 </div>
                                 <div class="budget-stat">
-                                    <span>Utilized: $${project.budget_utilized?.toLocaleString() || 0}</span>
+                                    <span>Utilized: ₦${project.budget_utilized?.toLocaleString() || 0}</span>
                                     <span>${financial.utilizationPercentage}%</span>
                                 </div>
                             </div>
@@ -1139,7 +1139,6 @@ class PMOApplication {
         
         // Set defaults
         const today = new Date().toISOString().split('T')[0];
-        console.log('here stop 2414')
         this.proposedStartInput.value = today;
         this.statusInput.value = 'Planning';
         this.priorityInput.value = 'Medium';
@@ -1164,7 +1163,6 @@ class PMOApplication {
             this.projectModal.style.display = 'block';
             
             // If we're in detail view, close it
-            console.log('here')
             if (this.currentView === 'detail') {
                 this.showProjectsList();
             }
@@ -1250,7 +1248,7 @@ class PMOApplication {
         const projectId = this.projectId.value;
         const url = projectId ? `${this.apiBaseUrl}/projects/${projectId}` : `${this.apiBaseUrl}/projects`;
         const method = projectId ? 'PUT' : 'POST';
-
+        console.log({projectId, url, method})
         try {
             const response = await fetch(url, {
                 method: method,
@@ -1289,6 +1287,7 @@ class PMOApplication {
     // ==================== DELETE FUNCTIONALITY ====================
     
     showDeleteModal(projectId, projectName) {
+        console.log({projectId, projectName})
         this.deleteProjectId = projectId;
         document.getElementById('deleteProjectName').textContent = projectName;
         this.deleteModal.style.display = 'block';

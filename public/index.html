@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PMO Project Management</title>
+    <title>NIMASA Project Management Office</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -338,6 +338,38 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content small-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Delete Project</h2>
+                <button class="close-btn" id="closeDeleteModal">&times;</button>
+            </div>
+            <div style="padding: 1.5rem; text-align: center;">
+                <i class="fas fa-trash-alt fa-3x" style="color: #f72585; margin-bottom: 1rem;"></i>
+                <h3 style="margin-bottom: 1rem;">Confirm Deletion</h3>
+                <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+                <div class="delete-project-name" id="deleteProjectName" style="
+                    font-weight: 600;
+                    color: #f72585;
+                    font-size: 1.1rem;
+                    margin: 1rem 0;
+                    padding: 0.75rem;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border-left: 4px solid #f72585;
+                "></div>
+                <p><strong>All associated data, tasks, and documents will be permanently deleted.</strong></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelDelete">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">
+                        <i class="fas fa-trash"></i> Delete Project
+                    </button>
+                </div>
+            </div>
+        </div>
+</div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>

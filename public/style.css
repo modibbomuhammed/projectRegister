@@ -3055,3 +3055,81 @@ select option[selected] {
     flex: 1;
     min-width: 200px;
 }
+
+/* Add these styles to your CSS file */
+
+/* 1. Make table container scrollable on overflow */
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--border-radius);
+}
+
+/* 2. Set minimum table width */
+#projectsTable {
+    min-width: 1000px;
+    width: 100%;
+}
+
+/* 3. Fix column widths */
+#projectsTable th:last-child,
+#projectsTable td:last-child {
+    position: sticky;
+    right: 0;
+    background: white;
+    z-index: 2;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    min-width: 140px;
+}
+
+/* 4. Ensure action buttons are always visible */
+.action-buttons {
+    display: flex;
+    gap: 4px;
+    position: relative;
+    z-index: 3;
+    background: white;
+}
+
+/* Allow project names to wrap naturally */
+#projectsTable td:nth-child(2) {
+    min-width: 200px;
+    max-width: 300px;
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.4;
+}
+
+/* Make the table adjust column widths automatically */
+#projectsTable {
+    table-layout: auto; /* Changed from fixed */
+    width: 100%;
+}
+
+/* Adjust column widths for better balance */
+#projectsTable th:nth-child(2) { /* Project Name column */
+    min-width: 200px;
+    max-width: 300px;
+}
+
+/* Ensure action column stays fixed width */
+#projectsTable th:last-child,
+#projectsTable td:last-child {
+    position: sticky;
+    right: 0;
+    background: white;
+    z-index: 2;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    min-width: 160px;
+    max-width: 160px;
+    width: 160px;
+    text-align: center;
+}
+
+
+/* Fix ONLY the In Progress badge */
+.status-in-progress {
+    color: #0c5460 !important; /* Dark blue text for contrast */
+    font-weight: 600; /* Make it bolder */
+    background: #d1ecf1; /* Keep original background */
+    border: 1px solid #bee5eb; /* Add border for definition */
+}
