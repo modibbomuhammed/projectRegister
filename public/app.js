@@ -408,7 +408,8 @@ class PMOApplication {
                     </td>
                     <td>${this.escapeHtml(project.department || '')}</td>
                     <td>
-                        <strong>₦${budget.toLocaleString()}</strong>
+                        <strong>₦
+        ${budget.toLocaleString()}</strong>
                         <div class="small text-muted">${utilizationRate}% utilized</div>
                     </td>
                     <td>${this.escapeHtml(project.project_manager || '')}</td>
